@@ -54,7 +54,6 @@ effectively.
 Projects using this library will incur following limitations
 on themselves:
 
-- Must use Jetty engine, as `java-saml` requires servlet classes
 - Uses ktor API marked as `internal`, thus could lead to errors if
   using a more recent ktor version.  
   You might need to fix it yourself. Pull requests are welcome ;-)
