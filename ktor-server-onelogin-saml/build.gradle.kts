@@ -10,7 +10,6 @@ java {
 
 description = "Integrates Ktor with OneLogin java-saml library."
 val nameHumanReadable = "Ktor Server OneLogin SAML Integration"
-val inceptionYear = "2019"
 
 val kotlinVersion: String by project
 val ktorVersion: String by project
@@ -35,7 +34,7 @@ publishing {
                 name.set(nameHumanReadable)
                 description.set(project.description)
                 url.set("https://github.com/linked-planet/ktor-plugins/${project.name}")
-                inceptionYear.set(inceptionYear)
+                inceptionYear.set("2023")
                 licenses {
                     license {
                         name.set("The Apache Software License, Version 2.0")
@@ -46,7 +45,7 @@ publishing {
                 developers {
                     developer {
                         name.set("Alexander Weickmann")
-                        email.set("alexander.weickmann@gmail.com")
+                        email.set("alexander.weickmann@linked-planet.com")
                         url.set("https://github.com/weickmanna")
                         organization.set("linked-planet GmbH")
                         organizationUrl.set("https://linked-planet.com")
