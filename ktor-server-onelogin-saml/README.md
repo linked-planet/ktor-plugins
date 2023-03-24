@@ -1,6 +1,6 @@
 # ktor-server-onelogin-saml
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.linked-planet/ktor-server-onelogin-saml.svg?label=maven%20central)](https://search.maven.org/search?q=g:%22com.linked-planet%22%20AND%20a:%22ktor-server-onelogin-saml%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.linked-planet/ktor-client-awesome-logging.svg?label=central)](https://central.sonatype.com/search?q=ktor-server-onelogin-saml&namespace=com.linked-planet)
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Integrates [ktor](ktor.io) with onelogin's
