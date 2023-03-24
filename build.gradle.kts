@@ -2,20 +2,20 @@ plugins {
     kotlin("jvm") version "1.8.10" apply (false)
 
     // derive gradle version from git tag
-    id("pl.allegro.tech.build.axion-release") version "1.14.3"
+    id("pl.allegro.tech.build.axion-release") version "1.15.0"
 
     // publishing
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     id("signing")
     `maven-publish`
 
     // provide & configure dependencyUpdates
-    id("com.github.ben-manes.versions") version "0.45.0"
+    id("com.github.ben-manes.versions") version "0.46.0"
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
 ext.set("kotlinVersion", "1.8.10")
-ext.set("ktorVersion", "2.2.3")
+ext.set("ktorVersion", "2.2.4")
 
 val libVersion: String = scmVersion.version
 allprojects {
