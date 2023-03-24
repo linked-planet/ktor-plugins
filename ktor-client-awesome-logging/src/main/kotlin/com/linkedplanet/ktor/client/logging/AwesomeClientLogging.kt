@@ -19,7 +19,7 @@
  */
 @file:Suppress("unused")
 
-package com.linkedplanet.ktor.plugins.logging
+package com.linkedplanet.ktor.client.logging
 
 import io.ktor.client.*
 import io.ktor.client.plugins.api.*
@@ -184,7 +184,7 @@ class AwesomeClientLoggingConfig {
 
 }
 
-private suspend fun <T> withMdc(vararg infos: Pair<String, Any?>, func: suspend () -> T): T =
+suspend fun <T> withMdc(vararg infos: Pair<String, Any?>, func: suspend () -> T): T =
     withMdc(MDC.getCopyOfContextMap() ?: emptyMap(), infos.toMap(), func)
 
 private suspend fun <T> withMdc(oldState: Map<String, String>, newState: Map<String, Any?>, func: suspend () -> T): T {
