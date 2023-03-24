@@ -31,6 +31,14 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
 
+    signing {
+        useInMemoryPgpKeys(
+            findProperty("signingKey").toString(),
+            findProperty("signingPassword").toString()
+        )
+        sign(publishing.publications)
+    }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "11"
     }
@@ -45,14 +53,6 @@ subprojects {
             from("$projectDir/src/main/kotlin")
         }
     }
-}
-
-signing {
-    useInMemoryPgpKeys(
-        findProperty("signingKey").toString(),
-        findProperty("signingPassword").toString()
-    )
-    sign(publishing.publications)
 }
 
 nexusPublishing {
