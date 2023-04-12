@@ -89,7 +89,8 @@ val AwesomeClientLogging = createClientPlugin("AwesomeClientLogging", ::AwesomeC
 
     onResponse { response ->
         val body =
-            if (response.status.isSuccess() || !config.responseConfig.logBodyOnError) null
+            if (response.status.isSuccess() || response.status.isRedirect() || !config.responseConfig.logBodyOnError)
+                null
             else {
                 val wrapped = response.call.wrapWithContent(response.content)
                 wrapped.response.contentType()?.let { contentType ->
@@ -132,6 +133,8 @@ private suspend inline fun ByteReadChannel.tryReadText(charset: Charset): String
 } catch (cause: Throwable) {
     null
 }
+
+private fun HttpStatusCode.isRedirect(): Boolean = value in (300 until 400)
 
 class AwesomeClientLoggingConfig {
 
