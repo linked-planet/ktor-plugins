@@ -89,14 +89,14 @@ val AwesomeClientLogging = createClientPlugin("AwesomeClientLogging", ::AwesomeC
 
     onResponse { response ->
         val body =
-            if (response.status.isSuccess() || response.status.isRedirect() || !config.responseConfig.logBodyOnError)
-                null
-            else {
+            if (response.status.isError() && config.responseConfig.logBodyOnError) {
                 val wrapped = response.call.wrapWithContent(response.content)
                 wrapped.response.contentType()?.let { contentType ->
                     val charset = contentType.charset() ?: Charsets.UTF_8
                     wrapped.response.content.tryReadText(charset) ?: "[response body unavailable]"
                 }
+            } else {
+                null
             }
         logResponse(config, response, body)
     }
@@ -122,8 +122,8 @@ private suspend fun logResponse(config: AwesomeClientLoggingConfig, response: Ht
     val message = "${config.responseConfig.prefix}${statusCode}: ${from}${logBody}"
     withMdc(config.traceIdFieldName to traceId) {
         val level =
-            if (response.status.isSuccess()) config.responseConfig.levelSuccess
-            else config.responseConfig.levelError
+            if (response.status.isError()) config.responseConfig.levelError
+            else config.responseConfig.levelSuccess
         config.logger.log(message, level)
     }
 }
@@ -134,7 +134,7 @@ private suspend inline fun ByteReadChannel.tryReadText(charset: Charset): String
     null
 }
 
-private fun HttpStatusCode.isRedirect(): Boolean = value in (300 until 400)
+private fun HttpStatusCode.isError(): Boolean = value >= 400
 
 class AwesomeClientLoggingConfig {
 
