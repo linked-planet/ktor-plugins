@@ -4,7 +4,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -16,7 +16,7 @@ val ktorVersion: String by project
 dependencies {
     implementation(kotlin("stdlib", kotlinVersion))
     api("io.ktor", "ktor-client-core", ktorVersion)
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-slf4j", "1.6.4")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-slf4j", "1.7.3")
 }
 
 publishing {
