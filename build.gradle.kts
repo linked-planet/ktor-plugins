@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.9.20" apply (false)
+    kotlin("jvm") version "1.9.21" apply (false)
 
     // derive gradle version from git tag
-    id("pl.allegro.tech.build.axion-release") version "1.15.5"
+    id("pl.allegro.tech.build.axion-release") version "1.16.0"
 
     // publishing
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -14,7 +14,7 @@ plugins {
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
-ext.set("kotlinVersion", "1.9.20")
+ext.set("kotlinVersion", "1.9.21")
 ext.set("ktorVersion", "2.3.6")
 
 val libVersion: String = scmVersion.version

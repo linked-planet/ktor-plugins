@@ -23,19 +23,16 @@ package com.linkedplanet.ktor.client.logging
 
 import io.ktor.client.*
 import io.ktor.client.plugins.api.*
-import io.ktor.client.plugins.observer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.slf4j.MDCContext
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.slf4j.event.Level
 import java.nio.charset.Charset
 import java.util.*
@@ -70,9 +67,15 @@ interface Logger {
 
 private val traceIdKey = AttributeKey<String>("traceId")
 
-@OptIn(InternalAPI::class)
 val AwesomeClientLogging = createClientPlugin("AwesomeClientLogging", ::AwesomeClientLoggingConfig) {
     val config = pluginConfig
+
+    /*
+     * The following line is needed so we can read the response body multiple times.
+     * Without this treatment, we are "consuming" the response body, making it unavailable to the application.
+     * -> Should not be needed anymore starting from ktor 3.0.0 (SaveBodyPlugin should provide this functionality).
+     */
+    client.receivePipeline.intercept(HttpReceivePipeline.State) { response -> interceptReceive(config, response) }
 
     on(SendingRequest) { request, content ->
         val body =
@@ -86,20 +89,21 @@ val AwesomeClientLogging = createClientPlugin("AwesomeClientLogging", ::AwesomeC
             }
         logRequest(config, request, body)
     }
+}
 
-    onResponse { response ->
-        val body =
-            if (response.status.isError() && config.responseConfig.logBodyOnError) {
-                val wrapped = response.call.wrapWithContent(response.content)
-                wrapped.response.contentType()?.let { contentType ->
-                    val charset = contentType.charset() ?: Charsets.UTF_8
-                    wrapped.response.content.tryReadText(charset) ?: "[response body unavailable]"
-                }
-            } else {
-                null
-            }
-        logResponse(config, response, body)
-    }
+private suspend fun PipelineContext<HttpResponse, Unit>.interceptReceive(
+    config: AwesomeClientLoggingConfig,
+    response: HttpResponse,
+) {
+    val responseData = CachedHttpResponseData.create(response)
+
+    val body =
+        if (response.status.isError() && config.responseConfig.logBodyOnError)
+            responseData.body.ifEmpty { "[response body unavailable]" }
+        else null
+    logResponse(config, response, body)
+
+    proceedWith(CachedHttpResponse(response.call, responseData, response.coroutineContext))
 }
 
 private suspend fun logRequest(config: AwesomeClientLoggingConfig, request: HttpRequestBuilder, body: String? = null) {
@@ -185,24 +189,4 @@ class AwesomeClientLoggingConfig {
         var bodyDelimiter: String,
     )
 
-}
-
-suspend fun <T> withMdc(vararg infos: Pair<String, Any?>, func: suspend () -> T): T =
-    withMdc(MDC.getCopyOfContextMap() ?: emptyMap(), infos.toMap(), func)
-
-private suspend fun <T> withMdc(oldState: Map<String, String>, newState: Map<String, Any?>, func: suspend () -> T): T {
-    newState.entries.forEach { (key, value) ->
-        MDC.put(key, value.toString())
-    }
-    return try {
-        withContext(MDCContext()) {
-            func()
-        }
-    } finally {
-        // the MDC context does not reliably capture the old context before switching into the new context
-        // this leads to values getting lost when restoring the old context, so we take care of it ourselves
-        oldState.entries.forEach { (key, value) ->
-            MDC.put(key, value)
-        }
-    }
 }

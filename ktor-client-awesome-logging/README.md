@@ -2,6 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.linked-planet/ktor-client-awesome-logging.svg?label=central)](https://central.sonatype.com/search?q=ktor-client-awesome-logging&namespace=com.linked-planet)
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
+[![ktor Version](https://img.shields.io/badge/ktor-2.3.6-blue)](https://ktor.io/)
 
 Awesome logging experience for [ktor][ktor] HttpClient.
 
