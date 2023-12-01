@@ -46,3 +46,14 @@ jobs:
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+  notify-slack:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        uses: iRoachie/slack-github-actions@v2.3.2
+        env:
+          SLACK_WEBHOOK_URL: ${{ vars.LP_SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
