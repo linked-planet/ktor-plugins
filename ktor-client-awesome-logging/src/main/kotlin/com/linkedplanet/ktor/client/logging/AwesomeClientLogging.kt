@@ -2,7 +2,7 @@
  * #%L
  * ktor-client-awesome-logging
  * %%
- * Copyright (C) 2023 linked-planet GmbH
+ * Copyright (C) 2024 linked-planet GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
