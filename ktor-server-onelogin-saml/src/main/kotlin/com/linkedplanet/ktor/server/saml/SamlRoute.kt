@@ -24,6 +24,7 @@ import com.onelogin.saml2.settings.Saml2Settings
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.html.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
@@ -73,17 +74,17 @@ inline fun <reified S : Any> Route.saml(
     post<AttributeConsumerService> {
         requireSAMLEnabled(samlEnabled) {
             withSAMLAuth { auth ->
-                // saml auth / ktor "consume" the form parameters so we won't be able to get the relay state anymore
-                val servletRequest = call.getServletRequest()
-                val relayState = servletRequest.getParameter("RelayState")
-                call.application.environment.log.debug("RelayState: $relayState")
+                // saml auth / ktor "consume" the form parameters, so we won't be able to get the relay state anymore
+                // -> get it from the servlet request before calling the auth routine
+                val relayState = call.getServletRequest().getParameter("RelayState")
 
                 auth.processResponse()
+
                 requireValid(auth) {
                     if (!auth.isAuthenticated) {
                         call.respond(HttpStatusCode.BadRequest, "Not authenticated")
                     } else if (!authorizer(auth)) {
-                        call.respond(HttpStatusCode.Forbidden, "Not permitted")
+                        call.respond(ForbiddenResponse())
                     } else {
                         val session = createSession(auth.nameId)
                         call.sessions.set(session)
