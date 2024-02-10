@@ -22,33 +22,37 @@ package com.linkedplanet.ktor.server.saml
 import com.onelogin.saml2.Auth
 import com.onelogin.saml2.settings.Saml2Settings
 import io.ktor.http.*
+import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.locations.*
-import io.ktor.server.locations.post
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
-import kotlinx.html.*
+import kotlinx.html.body
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.ul
+import kotlinx.serialization.Serializable
 
 
 const val SAMLEndpointBasePath: String = "/sso/saml"
 
-@KtorExperimentalLocationsAPI
-@Location("$SAMLEndpointBasePath/metadata")
-class Metadata
+@Serializable
+@Resource("$SAMLEndpointBasePath/metadata")
+object Metadata
 
-@KtorExperimentalLocationsAPI
-@Location("$SAMLEndpointBasePath/acs")
-class AttributeConsumerService
+@Serializable
+@Resource("$SAMLEndpointBasePath/acs")
+object AttributeConsumerService
 
-@KtorExperimentalLocationsAPI
-@Location("$SAMLEndpointBasePath/sls")
-class SingleLogoutService
+@Serializable
+@Resource("$SAMLEndpointBasePath/sls")
+object SingleLogoutService
 
 @Suppress("unused")
-@KtorExperimentalLocationsAPI
 inline fun <reified S : Any> Route.saml(
     samlEnabled: Boolean,
     crossinline authorizer: (Auth) -> Boolean,

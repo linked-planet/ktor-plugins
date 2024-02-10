@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 java {
@@ -16,9 +17,11 @@ val ktorVersion: String by project
 val oneloginVersion = "2.9.0"
 dependencies {
     implementation(kotlin("stdlib", kotlinVersion))
-    api("io.ktor", "ktor-server-jetty", ktorVersion)
-    api("io.ktor", "ktor-server-locations", ktorVersion)
-    api("io.ktor", "ktor-server-html-builder", ktorVersion)
+    implementation("io.ktor", "ktor-server-jetty", ktorVersion)
+    implementation("io.ktor", "ktor-server-resources", ktorVersion)
+    implementation("io.ktor", "ktor-server-html-builder", ktorVersion)
+    implementation("io.ktor", "ktor-server-auth", ktorVersion)
+    implementation("io.ktor", "ktor-server-sessions", ktorVersion)
     api("com.onelogin", "java-saml", oneloginVersion)
 }
 

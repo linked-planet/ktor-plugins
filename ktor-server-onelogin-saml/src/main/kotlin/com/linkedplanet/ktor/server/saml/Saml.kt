@@ -27,9 +27,11 @@ import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
 import io.ktor.server.servlet.*
 import io.ktor.util.pipeline.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.eclipse.jetty.server.Request
-import javax.servlet.http.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 suspend fun PipelineContext<Unit, ApplicationCall>.redirectToIdentityProvider() {
     withSAMLAuth { auth ->
@@ -41,7 +43,6 @@ suspend fun PipelineContext<Unit, ApplicationCall>.redirectToIdentityProvider() 
 
 suspend fun PipelineContext<Unit, ApplicationCall>.withSAMLAuth(handler: suspend (Auth) -> Unit) {
     val auth = Auth(SamlConfig.saml2Settings, call.getServletRequest(), call.getServletResponse())
-    call
     handler(auth)
 }
 
@@ -49,6 +50,7 @@ fun ApplicationCall.getServletRequest(): HttpServletRequest {
     val servletRequest = getAsyncServletApplicationCall().request.servletRequest
     // when running behind proxy with ssl offloading, the request must be customized to use the original scheme
     // Jetty request customizers won't be executed by ktor so we have to do it manually here
+    // ATTENTION: This requires ktor XForwardedHeaders plugin to be installed !!!
     (servletRequest as Request).scheme = request.origin.scheme
     return servletRequest
 }
