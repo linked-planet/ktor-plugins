@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "1.9.21" apply (false)
-    kotlin("plugin.serialization") version "1.9.21" apply false
+    kotlin("jvm") version "1.9.22" apply (false)
+    kotlin("plugin.serialization") version "1.9.22" apply false
 
     // derive gradle version from git tag
-    id("pl.allegro.tech.build.axion-release") version "1.16.0"
+    id("pl.allegro.tech.build.axion-release") version "1.16.1"
 
     // publishing
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -11,12 +11,12 @@ plugins {
     `maven-publish`
 
     // provide & configure dependencyUpdates
-    id("com.github.ben-manes.versions") version "0.50.0"
+    id("com.github.ben-manes.versions") version "0.51.0"
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
-ext.set("kotlinVersion", "1.9.21")
-ext.set("ktorVersion", "2.3.6")
+ext.set("kotlinVersion", "1.9.22")
+ext.set("ktorVersion", "2.3.8")
 
 val libVersion: String = scmVersion.version
 allprojects {
