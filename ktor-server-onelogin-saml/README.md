@@ -16,22 +16,30 @@ on themselves:
 - Breaks ktor public API using reflection, which could lead to
   errors if using a more recent ktor version than this library.
   You might need to fix it yourself. Pull requests are welcome ;-)
-- Ties your app to a particular version of ktor
 
-## Configuration
+## Basic Installation
 
-Please refer to [reference.conf](src/main/resources/reference.conf).
 
-## Usage
+### 0) Check Requirements
 
-### Basic Installation
+Make sure you have the following `ktor-server` plugins installed (it is not enough to add
+the dependencies, you have to install them in your `Application` class):
 
-#### 1) Instantiate SAML route in routes configuration:
+- [XForwardedHeaders](https://ktor.io/docs/forward-headers.html):  
+  if you are running behind a reverse proxy / load balancer
+- [Session Auth](https://ktor.io/docs/session-auth.html):  
+  On successful SAML authentication, a session will be created by
+  [SamlRoute](src/main/kotlin/com/linkedplanet/ktor/server/saml/SamlRoute.kt)
+
+***You must use Jetty as your server engine!***
+
+### 1) Add SAML route in routes configuration:
 
 ```kotlin
 routing {
     saml<Session>(
-        AppConfig.samlEnabled,
+        // maybe you wish to disable saml via config locally
+        true,
         // lambda to add custom authorization logic after successful authentication
         authorizer = { _ -> true },
         // create session object after authentication + authorization are successful
@@ -39,18 +47,23 @@ routing {
 }
 ```
 
-#### 2) Redirect users with no session to identity provider
+### 2) Redirect users without session to Identity Provider
 
-in index route:
+in your index route:
 
 ```kotlin
-// if the user does not have a session and saml-sso is enabled, we redirect the user to the identity provider
-if (session == null && ssoEnabled) {
+// if the user does not have a session and saml is enabled, redirect the user to the identity provider
+if (session == null && samlEnabled) {
     redirectToIdentityProvider()
 }
 ``` 
 
-### Advanced Usage
+### 3) Configuration
+
+Copy the contents of [reference.conf](src/main/resources/reference.conf) to your `application.conf`
+and enter your values.
+
+## Advanced Usage
 
 We declared all components of the library public, so you can build the
 behavior you need by yourself if the basic installation is not sufficient
@@ -67,17 +80,6 @@ SAML Auth object.
 ```kotlin
 withSAMLAuth { auth ->
     // do whatever with auth
-}
-```
-
-Some Auth methods are implemented in a blocking way. To handle
-this, use IO dispatcher context:
-
-```kotlin
-withSAMLAuth { auth ->
-    withContext(Dispatchers.IO) {
-        auth.login()
-    }
 }
 ```
 
